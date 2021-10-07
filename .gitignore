@@ -1,0 +1,8 @@
+gitignore
+CppProperties.json
+.vs
+.vscode
+TresEnRaya.vcxproj
+TresEnRaya.vcxproj.user
+main.o
+main.exe
