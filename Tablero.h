@@ -2,140 +2,149 @@
 #include <string>
 #include <iostream>
 
+#include "Player.h"
+
 class Tablero
 {
 private:
-    int datos[3][3];
-    int ganador;
+    Player* ganador;
+    char datos[3][3];
 
 public:
     Tablero(/* args */);
     ~Tablero();
 
-    bool GanaJugador(int jugadorNumber) const;
+    bool GanaJugador(Player& player) const;
     bool IngresarEntrada(int jugadorNumber, int position);
     bool CasillaDisponible(int position);
-    int getGanador();
+    Player*  getGanador();
     void printData();
-    int getValue(int position);
+    char getValue(int position);
+    bool IngresarEntrada(Player& player, int position);
 
 private:
+    void inicializarTablero();
     void ingresarDato(int jugadorNumber);
     void setValue( int position , int value );
+    void setValue( int position , char value );
     void getPosition(int* i, int* j,int posicition);
 };
 
 Tablero::Tablero(/* args */)
 {
-    //llenar la matriz de tados en cero
-    //      0   0   0
-    //      0   0   0
-    //      0   0   0
-    ganador = 0;
-    for (short int i = 0; i<3 ; i++){
-        for (short int j = 0; j < 3; j++)
-        {
-            datos[i][j] = 0;
-        }
-    }
+    inicializarTablero();
 }
 
 Tablero::~Tablero()
 {
 }
 
-bool Tablero::GanaJugador(int jugadorNumber) const{
-    bool hayGanador = false;
-    int sumaTotal;
-
-    if ( jugadorNumber == 1 ) {
-        sumaTotal = 3;
+void Tablero::inicializarTablero(){
+    //llenar la matriz de tados en cero
+    //      0   0   0
+    //      0   0   0
+    //      0   0   0
+    ganador = nullptr;
+    for (short int i = 0; i<3 ; i++){
+        for (short int j = 0; j < 3; j++){
+            datos[i][j] = ' ';
+        }
     }
-    else {
-        sumaTotal = 6;
-    }
+}
 
-    int sumaDatos = 0;
+bool Tablero::GanaJugador(Player& player) const{
+    bool gana = false;
+    short coincidencias = 0; //acumulador de las coincidencias del caracter
+    char simbolo = player.GetSimbol();
 
-    //buscar por filas
-    for (int i = 0; i < 3; i++){
-        sumaDatos = 0;
-        for (int j = 0; j < 3; j++){
-            if ( datos[i][j] == jugadorNumber ){
-                sumaDatos += jugadorNumber;
+    //verificar por filas
+    for ( int i = 0 ; i < 3; i++ ){
+        coincidencias = 0;
+        for ( int j = 0 ; j < 3; j++ ){
+            if ( datos[i][j] == ' '){
+                gana = false;
+                break;
+                //return;
+            }
+            else if (datos[i][j] == simbolo){
+                coincidencias++;
             }
         }
-        std::cout<<"Filas: suma : "<<sumaDatos<<" suma total: "<<sumaTotal<<std::endl;
-        if ( sumaDatos == sumaTotal ){
-            hayGanador = true;
-            break;
+        if (coincidencias == 3){
+            return true;
         }
-    }
-    
-    if ( hayGanador ){
-        return hayGanador;
+        
     }
 
-    //buscar por columnas
-    for (int i = 0; i < 3; i++){
-        sumaDatos = 0;
-        for (int j = 0; j < 3; j++){
-            if ( datos[j][i] == jugadorNumber ){
-                sumaDatos += jugadorNumber;
+    //verificar por columnas
+    for ( int i = 0 ; i < 3; i++ ){
+        coincidencias = 0;
+        for ( int j = 0 ; j < 3; j++ ){
+            if ( datos[j][i] == ' '){
+                gana = false;
+                break;
+                //return;
+            }
+            else if (datos[j][i] == simbolo){
+                coincidencias++;
             }
         }
-
-        std::cout<<"Columnas: suma : "<<sumaDatos<<" suma total: "<<sumaTotal<<std::endl;
-        if ( sumaDatos == sumaTotal ){
-            hayGanador = true;
-            break;
+        if (coincidencias == 3){
+            return true;
         }
-    }
-    
-    if (hayGanador){
-        return hayGanador;
-    }
+        
+    }  
 
     //busqueda en las diagonales
-    sumaDatos=0;
+    coincidencias = 0;
     for (int i = 0; i < 3; i++){
-        if ( datos[i][i] == jugadorNumber ){
-            sumaDatos += jugadorNumber;
+        if ( datos[i][i] == ' ' ){
+            gana = false;
+            break;
+        }
+        else if (datos[i][i] == simbolo){
+            coincidencias++;
         }
     }
-    std::cout<<"Diagonal p: suma : "<<sumaDatos<<" suma total: "<<sumaTotal<<std::endl;
-    if ( sumaDatos == sumaTotal ){
-        hayGanador = true;
-        return hayGanador;
+    if (coincidencias == 3){
+        return true;
     }
 
     //Diagonal invertida
-    int i=0,j=2;
-    sumaDatos = 0;
+    int i=0,j=0;
+    coincidencias = 0;
     while ( i < 3){
-        if ( datos[i][j] == jugadorNumber ){
-            sumaDatos += jugadorNumber;
+        if ( datos[i][j] == ' ' ){
+            gana = false;
+            break;
+        } else if (datos[i][i] == simbolo){
+            coincidencias++;
         }
         i++;
         j--;
     }
-    std::cout<<"Diagonal s: suma : "<<sumaDatos<<" suma totala: "<<sumaTotal<<std::endl;
-    if ( sumaDatos == sumaTotal ){
-        hayGanador = true;
-        return hayGanador;
+    if (coincidencias == 3){
+        return true;
     }
 
-    return hayGanador;
+    return gana;
 }
 
-bool Tablero::IngresarEntrada(int jugadorNumber, int position){
+bool Tablero::IngresarEntrada(Player& player, int position){
+    //player.PrintPlayer();
+
+    if (position <0 || position >9){
+        cout<<"Posicion fuera de rango\n";
+        return false;
+    }
+
     if ( CasillaDisponible(position) ){
-        setValue(position,jugadorNumber);
+        setValue(position,player.GetSimbol());
 
         //Verificar si gana el jugador
-        if (GanaJugador(jugadorNumber)){
-            std::cout<<"\nJugador "<<jugadorNumber<<" gana la partida\n";
-            ganador = jugadorNumber;
+        if (GanaJugador(player)){
+            std::cout<<"\nJugador "<<player.GetName()<<" gana la partida\n";
+            ganador = &player;
         }
 
         return true;
@@ -146,7 +155,8 @@ bool Tablero::IngresarEntrada(int jugadorNumber, int position){
 }
 
 bool Tablero::CasillaDisponible(int position) {
-    if ( getValue(position) == 0 ){
+    
+    if ( getValue(position) == ' ' ){
         return true;
     }
     else {
@@ -155,7 +165,7 @@ bool Tablero::CasillaDisponible(int position) {
 
 }
 
-int Tablero::getValue(int position){
+char Tablero::getValue(int position){
     int i,j;
     getPosition(&i,&j,position);
 
@@ -168,7 +178,13 @@ void Tablero::setValue( int position , int value ){
     datos[i][j] = value;
 }
 
-int Tablero::getGanador(){
+void Tablero::setValue( int position , char value ){
+    int i,j;
+    getPosition(&i,&j,position);
+    datos[i][j] = value;
+}
+
+Player* Tablero::getGanador(){
     return ganador;
 }
 
@@ -217,10 +233,11 @@ void Tablero::getPosition(int* i, int* j,int position){
 }
 
 void Tablero::printData(){
+    
     for (int i = 0; i < 3; i++){
         std::cout<<"[ ";
         for (int j = 0; j < 3; j++){
-            std::cout<<datos[i][j]<< " ";
+            std::cout<<(char)datos[i][j]<< " ";
         }
         std::cout<<"]\n";
     }

@@ -17,7 +17,7 @@ public:
     ~ScreenHandler();
 
     void ImprirTableroVacio() const;
-    void ImprirTablero(Tablero&) const;
+    void ImprirTablero(Tablero& tablero) const;
 };
 
 ScreenHandler::ScreenHandler(/* args */)
@@ -43,7 +43,6 @@ void ScreenHandler::ImprirTableroVacio() const {
     cout<<setw(30)<<"|7       |8       |9       |\n";
     cout<<setw(30)<<" --------------------------\n";
 }
-//
 
 void ScreenHandler::ImprirTablero(Tablero& tablero) const {
     cout<<setw(30)<<" --------------------------\n";
@@ -52,18 +51,7 @@ void ScreenHandler::ImprirTablero(Tablero& tablero) const {
     cout<<" |";
     for (int i = 1; i <= 3; i++){
         int valor = tablero.getValue(i);
-        cout<<"    ";
-        if ( valor != 0 ){
-            if ( valor == 1 ){
-                cout<<"X";
-            } 
-            else {
-                cout<<"O";
-            }
-        } 
-        else {
-            cout<<" ";
-        }
+        cout<<"    "<<(char)valor;
         cout<<"   |";
     }
 
@@ -74,38 +62,17 @@ void ScreenHandler::ImprirTablero(Tablero& tablero) const {
     cout<<" |";
     for (int i = 4; i <= 6; i++){
         int valor = tablero.getValue(i);
-        cout<<"    ";
-        if ( valor != 0 ){
-            if ( valor == 1 ){
-                cout<<"X";
-            } 
-            else {
-                cout<<"O";
-            }
-        } 
-        else {
-            cout<<" ";
-        }
+        cout<<"    "<<(char)valor;
         cout<<"   |";
     }
     cout<<"\n |4       |5       |6       |\n";
     cout<<"  --------------------------\n";
     cout<<setw(30)<<"|        |        |        |\n";
+
     cout<<" |";
     for (int i = 7; i <= 9; i++){
         int valor = tablero.getValue(i);
-        cout<<"    ";
-        if ( valor != 0 ){
-            if ( valor == 1 ){
-                cout<<"X";
-            } 
-            else {
-                cout<<"O";
-            }
-        } 
-        else {
-            cout<<" ";
-        }
+        cout<<"    "<<(char)valor;
         cout<<"   |";
     }
     cout<<"\n |7       |8       |9       |\n";
