@@ -111,13 +111,13 @@ bool Tablero::GanaJugador(Player& player) const{
     }
 
     //Diagonal invertida
-    int i=0,j=0;
+    int i=0,j=2;
     coincidencias = 0;
     while ( i < 3){
         if ( datos[i][j] == ' ' ){
             gana = false;
             break;
-        } else if (datos[i][i] == simbolo){
+        } else if (datos[i][j] == simbolo){
             coincidencias++;
         }
         i++;
